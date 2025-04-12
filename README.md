@@ -1,6 +1,3 @@
-Perfect. I’ll write a README in English focused on the predictive maintenance aspects of the project. I’ll tailor it for users visiting your repository, highlighting the dataset, feature extraction, and ML model evaluation, while skipping details about GUAM's architecture.
-I'll let you know once it's ready.
-
 # GUAM Predictive Maintenance – Fault Detection in Urban Air Mobility
 
 **Predictive maintenance and fault detection system for a Generic Urban Air Mobility (GUAM) simulation.** This project uses **machine learning** to detect and classify control system faults in a simulated eVTOL (electric vertical take-off and landing) aircraft, helping enable early fault identification in Urban Air Mobility (UAM) operations.
