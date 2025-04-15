@@ -1,85 +1,152 @@
-# GUAM Predictive Maintenance – Fault Detection in Urban Air Mobility
+---
 
-**Predictive maintenance and fault detection system for a Generic Urban Air Mobility (GUAM) simulation.** This project uses **machine learning** to detect and classify control system faults in a simulated eVTOL (electric vertical take-off and landing) aircraft, helping enable early fault identification in Urban Air Mobility (UAM) operations.
+# ✈️ GUAM Predictive Maintenance – Fault Detection in Urban Air Mobility
 
-## Overview
+A **machine learning-powered predictive maintenance system** for NASA’s GUAM (Generic Urban Air Mobility) simulator, enabling early fault detection and classification in electric vertical take-off and landing (eVTOL) vehicles.
 
-Urban Air Mobility (UAM) vehicles (e.g. autonomous air taxis) require high reliability and **predictive maintenance** strategies to ensure safety. This project integrates the **NASA Generic UAM Simulation (GUAM)** – a MATLAB/Simulink-based eVTOL flight simulator – with machine learning techniques to detect anomalies and faults from flight data. We simulate various fault scenarios in the UAM vehicle’s control surfaces and actuators, extract diagnostic features from the flight telemetry, and train classifiers to **automatically identify faults** in real-time. The result is a proof-of-concept fault detection system that could warn of impending failures before they become critical, illustrating the potential of data-driven predictive maintenance in the UAM domain.
+---
 
-## Key Objectives and Contributions
+## 📚 Table of Contents
+- [🚀 Overview](#-overview)
+- [🎯 Key Objectives and Contributions](#-key-objectives-and-contributions)
+- [🗂️ Project Structure](#-project-structure)
+- [🧰 Tools and Technologies](#-tools-and-technologies)
+- [🛠️ Getting Started](#-getting-started)
+- [🔍 Results](#-results)
+- [📌 Final Summary](#-final-summary)
+- [✅ Conclusion](#-conclusion)
 
-- **Simulated Fault Dataset:** Generate a comprehensive dataset of simulated UAM flights under both normal conditions and a range of fault scenarios. Faults include control surface failures and other control system anomalies, injected on different aircraft control surfaces to mimic real failure modes. This dataset provides the training and testing data for our models.  
-- **Diagnostic Feature Extraction:** Develop a feature extraction pipeline to identify **key indicators of faults** from raw simulation signals. We analyze the vehicle telemetry (e.g. control surface commands, sensor readings, vehicle states) to extract features (statistical metrics, signal characteristics like RMS, etc.) that correlate strongly with the presence of a fault. This step is critical to boost model accuracy by providing informative inputs.  
-- **Machine Learning Fault Detection:** Train and evaluate multiple machine learning models for **fault detection and diagnosis**. The models learn to distinguish normal vs. faulty operation and further classify the **fault type** and the affected **control surface**. We experimented with various classifiers (Linear Discriminant Analysis, Naive Bayes, Support Vector Machines, decision trees, and Neural Networks) to compare their performance on this problem. The outcome is an optimized model that can detect faults with high accuracy and generalize to new flight scenarios, demonstrating an effective predictive maintenance approach for UAM vehicles.
+---
 
-## Project Structure
+## 🚀 Overview
 
-The repository is organized into two main components:
+Urban Air Mobility (UAM) systems (like autonomous air taxis) must be highly reliable. This project integrates NASA's **GUAM eVTOL flight simulator** with **machine learning techniques** to detect control system faults in real-time. By analyzing flight telemetry data from simulations, the system:
 
-- **`Dataset/`** – Scripts for data generation and preprocessing from the GUAM simulator:
-  - `RUNME.m` – Main script to orchestrate simulation data processing. It gathers flight simulation outputs for various fault scenarios and combines them into a structured dataset.
-  - `processTrajectory.m` – Function to process a single simulated flight trajectory (reading simulation output files, extracting relevant signals and computing features).
-  - `downSample.m` – Utility to down-sample or balance the dataset (useful for handling large simulation data and class imbalance).
-  - `dataTypeFault.m`, `checkSamples.m` – Helper scripts for labeling data (e.g., encoding fault types, verifying sample counts per class) and sanity-checking the dataset composition.
-  - *(Note: The actual GUAM simulation model and raw data files are not included in this repo due to size. Instead, these scripts assume you have run the GUAM simulator to produce output files for each scenario.)*
+- Detects faults
+- Identifies affected control surfaces
+- Classifies fault types
 
-- **`Classification_Learner/`** – MATLAB code for training and evaluating the fault detection models, organized by classification task:
-  - **`Fault/`** – Contains code and results for **fault detection (binary classification)** – determining if a flight had a fault or not. This includes the extracted feature table (`featureTable.mat`), scripts for feature ranking (`rankTable.m`, statistical tests) and training the fault classifier (`trainClassifier.m`). A saved model (`faultModel.mat`) and confusion matrix plotting script are provided.
-  - **`Surface/`** – Contains code for **faulty control surface identification**. Given a fault has occurred, this multi-class classifier predicts *which control surface* (which actuator/surface) is failing. Includes feature data, training script, and a trained model (`surfaceModel.mat`).
-  - **`TypeFault/`** – Contains code for **fault type classification**. Here the classifier distinguishes between different *failure modes* (types of faults, e.g. different kinds of control surface failures). This folder includes feature extraction and training scripts. (Subdirectories like `Surface_2/` and `Surface_5/` indicate analysis focused on specific surfaces in the simulation.)
-  - **`Cascade/`** – (Optional) Contains an experimental **cascaded classification approach**, where fault detection and identification are performed in sequence. For example, a cascade might first detect if a fault exists, then trigger secondary classification to pinpoint the fault’s type or location. This folder can include combined workflows or additional analyses integrating the Fault, Surface, and Type classifiers.  
+The result is a **proof-of-concept predictive maintenance framework** tailored for next-generation air mobility platforms.
 
-Each sub-folder in `Classification_Learner` includes MATLAB live scripts or functions for training the model, splitting data into training/validation sets (`splitFeatureTable.m`), visualizing confusion matrices, and assessing feature importance (e.g., via ANOVA or t-tests). The code is modular to allow experimenting with different algorithms and feature sets for each prediction task.
+---
 
-## Tools and Technologies
+## 🎯 Key Objectives and Contributions
 
-- **MATLAB** (R2023 or later) – Core development environment for simulation, data processing, and machine learning. Both the simulation and analysis are conducted within MATLAB/Simulink. Key MATLAB toolboxes used include:
-  - *Simulink* – to run the GUAM vehicle simulation models (providing the physics-based flight data).
-  - *Predictive Maintenance Toolbox / Statistics & Machine Learning Toolbox* – for signal processing, feature extraction (using apps like the Diagnostic Feature Designer), and training classifiers (e.g., Classification Learner or programmatic training functions).
-- **NASA GUAM Simulation** – The *Generic Urban Air Mobility* simulator is an open-source MATLAB/Simulink framework provided by NASA for eVTOL aircraft dynamics. It was used to generate realistic flight data under various scenarios. *(See NASA’s GUAM repository for more details.)* The simulator provides the **SimIn/SimOut** interface: we configure fault injection scenarios (SimIn) and collect time-series output data (SimOut) for each flight.
-- **Machine Learning Algorithms** – A variety of algorithms were applied using MATLAB’s ML tools: Linear Discriminant Analysis, Naive Bayes classifiers, Support Vector Machines (SVM), Decision Trees, Ensemble methods, and Neural Networks (multi-layer perceptron). This allowed us to benchmark simpler models against more complex ones for the fault detection task.
+- ✅ **Simulated Fault Dataset**  
+  Generate a rich dataset of normal and faulty flight scenarios using GUAM. Simulated faults mimic real-world control surface anomalies.
 
-No external libraries beyond MATLAB’s built-in toolboxes are required. The project demonstrates a complete pipeline from simulation to ML within the MATLAB environment, which could be of interest to researchers and developers in aerospace prognostics and health management.
+- ⚙️ **Diagnostic Feature Extraction**  
+  Extract key indicators (statistical features like RMS, peak, etc.) from flight signals to detect anomalies effectively.
 
-## Getting Started
+- 🤖 **Machine Learning Models**  
+  Train classifiers (LDA, SVM, Naive Bayes, Decision Trees, Neural Networks) for:
+  - Fault detection (binary)
+  - Faulty surface identification (multi-class)
+  - Fault type classification (multi-class)
 
-To explore or replicate this project, follow these steps:
+---
 
-1. **Prerequisites:** Ensure you have MATLAB installed (with Simulink and relevant toolboxes mentioned above). If you plan to regenerate the simulation data, you will need access to the NASA GUAM simulation model. You can obtain GUAM from the [NASA GitHub repository](https://github.com/nasa/Generic-Urban-Air-Mobility-GUAM) and set it up in MATLAB.  
-2. **Clone this Repository:** Download or clone `GUAM-Predictive-Maintenance` into your MATLAB workspace. Add the folders to your MATLAB path.  
-3. **Generate/Prepare Dataset:** If you do not wish to regenerate the data, you can directly download the pre-processed dataset here:
-👉 Download eVTOL_Data.mat
-Place this file in the Dataset/ directory.
-If you want to generate the dataset from scratch:
-Run the GUAM simulator for the desired scenarios (configured in Dataset/RUNME.m).
-Execute Dataset/RUNME.m – this will process simulation output files and produce eVTOL_Data.mat.
-4. **Train and Evaluate Models:** Use the scripts in the `Classification_Learner` folder to train the classifiers on the dataset:
-   - For example, to perform **fault detection**, navigate to `Classification_Learner/Fault/` and run **`trainClassifier.m`**. This will load the feature table, split it into training and test sets, train a classifier (you can adjust the algorithm in the script), and output performance metrics (confusion matrix, accuracy, etc.). You can similarly run the scripts in `Surface/` and `TypeFault/` for those classification tasks.  
-   - Alternatively, you can load the provided trained models (e.g., `faultModel.mat`, `surfaceModel.mat`) and use them to predict on new data or inspect their properties. The **`plotConfusionMatrix.m`** scripts can be used to visualize the confusion matrices for each trained model on test data.  
-5. **Experiment:** Feel free to modify the feature extraction or try different ML models. The code is organized to easily swap in different classifier types or perform feature selection. For instance, you might integrate a different neural network architecture or adjust which features are used, and then observe the impact on fault detection accuracy.
+## 🗂️ Project Structure
 
-*(Note: This project is a simulation-based study. Deploying it in a real UAM vehicle would require additional steps like real sensor integration and real-time execution, but the workflow and learnings here form a foundation for such future work.)*
-Sure! Here's the **"Results"** section written in English, formatted to fit seamlessly into your `README.md`, with a clean, markdown-friendly structure and a clear conclusion at the end.
+```markdown
+📁 Dataset/
+├── RUNME.m                  → Main script to process GUAM simulation data
+├── processTrajectory.m     → Extract features from a single flight
+├── downSample.m            → Balance or reduce dataset size
+├── dataTypeFault.m         → Encode fault types
+├── checkSamples.m          → Sanity-check sample distribution
+
+📁 Classification_Learner/
+├── Fault/                  → Binary fault detection (normal vs. fault)
+│   ├── featureTable.mat
+│   ├── trainClassifier.m
+│   ├── plotConfusionMatrix.m
+│   └── faultModel.mat
+│
+├── Surface/                → Predict which control surface failed
+│   ├── surfaceModel.mat
+│   └── trainClassifier.m
+│
+├── TypeFault/              → Classify type of fault
+│   ├── Surface_2/
+│   └── Surface_5/
+│
+└── Cascade/                → Optional: cascade models (detection → type/location)
+```
+
+<details>
+<summary><strong>📁 GUAM Simulation (Not Included)</strong></summary>
+
+The GUAM simulator itself is not bundled due to size. To use it:
+
+- Clone from [NASA’s GUAM GitHub](https://github.com/nasa/Generic-Urban-Air-Mobility-GUAM)
+- Set up the model in MATLAB/Simulink
+- Use it to generate raw SimOut flight data, then run `RUNME.m`
+
+</details>
+
+---
+
+## 🧰 Tools and Technologies
+
+- **MATLAB (R2023+)**  
+  - Simulink (for GUAM simulation)  
+  - Statistics & Machine Learning Toolbox  
+  - Predictive Maintenance Toolbox
+
+- **NASA GUAM**  
+  Open-source high-fidelity eVTOL simulator developed by NASA. Simulates control systems, sensor feedback, and actuator behavior.
+
+- **Machine Learning Models Used**  
+  - Kernel Naive Bayes  
+  - Linear Discriminant Analysis (LDA)  
+  - Support Vector Machines (SVM)  
+  - Decision Trees / Ensembles 
+
+---
+
+## 🛠️ Getting Started
+
+1. **Install MATLAB + Toolboxes**
+   - Required: Simulink, Predictive Maintenance Toolbox, Machine Learning Toolbox
+
+2. **Clone this Repository**
+   ```bash
+   git clone https://github.com/your-username/GUAM-Predictive-Maintenance
+   ```
+
+3. **Prepare Dataset**
+   - Option 1: **Use Preprocessed Data**  
+     Download `eVTOL_Data.mat` and place it in `Dataset/`
+   - Option 2: **Generate Your Own Data**
+     - Set up the GUAM simulator and run scenarios
+     - Execute: `RUNME.m`
+
+4. **Train Models**
+   - Navigate to folders like `Classification_Learner/Fault/`
+   - Run `trainClassifier.m` to train and evaluate models
+   - Use `plotConfusionMatrix.m` for visualization
+
+5. **Experiment!**
+   - Try new fault types or surfaces
+   - Modify features or ML models
+   - Extend to real-time inference (future work)
 
 ---
 
 ## 🔍 Results
 
-This section summarizes the performance of the developed predictive maintenance models based on simulated flight data from the GUAM environment. The classification tasks include fault detection, identification of the affected control surface, and classification of fault types. The dataset includes a wide range of injected failure modes across multiple flight trajectories.
+Performance metrics for each classification task are summarized below.
 
-### ✅ Fault Detection (Binary Classification)
+### ✅ Fault Detection (Binary)
 
-The goal is to detect whether a fault has occurred during flight. Several classifiers were evaluated:
-
-| Classifier              | Test Accuracy | Validation Accuracy | AUC (PR) |
-|------------------------|---------------|---------------------|----------|
-| **Kernel Naive Bayes** | **94.2%**     | 92.1%               | 0.987    |
+| Classifier              | Test Accuracy | Validation Accuracy | AUC (PR Curve) |
+|------------------------|---------------|---------------------|----------------|
+| **Kernel Naive Bayes** | **94.2%**     | 92.1%               | 0.987          |
 
 ---
 
-### 🛠️ Faulty Surface Identification (Multi-Class Classification)
-
-Given a detected fault, the next task is to determine which control surface was affected:
+### 🛠️ Faulty Surface Identification (Multi-Class)
 
 | Classifier              | Test Accuracy | Validation Accuracy | AUC (Surface 2 / 5) |
 |------------------------|---------------|---------------------|---------------------|
@@ -89,13 +156,11 @@ Given a detected fault, the next task is to determine which control surface was 
 
 ### ⚙️ Fault Type Classification
 
-Each control surface can experience different types of faults. For surfaces 2 and 5, the classifier performance is:
-
 #### Surface 2 – *Coarse Gaussian SVM*
 
 - Test Accuracy: **61.8%**
 - Validation Accuracy: **55.2%**
-- AUC by Fault Type:  
+- AUC by Fault Type:
   - Type 1: 0.776  
   - Type 2: 0.696  
   - Type 3: 0.802  
@@ -105,7 +170,7 @@ Each control surface can experience different types of faults. For surfaces 2 an
 
 - Test Accuracy: **69.5%**
 - Validation Accuracy: **52.4%**
-- AUC by Fault Type:  
+- AUC by Fault Type:
   - Type 1: 0.560  
   - Type 2: 0.906  
   - Type 3: 0.806  
@@ -115,30 +180,35 @@ Each control surface can experience different types of faults. For surfaces 2 an
 
 ### 📊 Most Informative Features
 
-Diagnostic feature selection was performed using **T-Test** and **ANOVA**, identifying the most discriminative features:
+Top-ranked by ANOVA and T-Test:
 
 - `SurfaceCmd_5 / RMS`
 - `SurfaceCmd_2 / PeakValue`
 - `SurfaceCmd_1 / PeakValue`
 - `EngineCmd_9 / Shape Factor`
 
-These features consistently ranked highest in separating faulty and normal conditions.
-
 ---
 
 ## 📌 Final Summary
 
-The proposed system demonstrates strong potential for predictive maintenance in Urban Air Mobility applications. Among the tested models:
+| Task                         | Accuracy        | Notes                             |
+|------------------------------|-----------------|-----------------------------------|
+| Fault Detection              | **94.2%**       | High binary classification performance  
+| Surface Identification       | **91.5%**       | Multi-class localization is reliable  
+| Fault Type Classification    | ~60–70%         | More challenging – improvement opportunity  
 
-- **Fault detection** reached up to **94.2% accuracy**, enabling reliable identification of anomalies.
-- **Fault localization** (surface identification) achieved **91.5% accuracy**.
-- **Fault type classification** remains more challenging, with accuracy around **60–70%**, suggesting opportunities for future improvement.
-
-These results confirm the **feasibility of using machine learning for early fault detection** in autonomous eVTOL vehicles, paving the way for smarter and safer urban flight systems.
+The framework demonstrates the potential of **ML-driven predictive maintenance** for UAM safety and autonomy.
 
 ---
 
-## Conclusion
+## ✅ Conclusion
 
-**GUAM-Predictive-Maintenance** provides a framework for applying machine learning to **aerospace predictive maintenance**. By leveraging a high-fidelity UAM simulator and data-driven modeling, we can detect faults early and classify their nature, potentially enabling proactive maintenance and improved safety in urban air mobility operations. Developers and researchers can use this repository as a starting point for further exploration, such as trying additional fault modes, refining feature extraction methods, or deploying the models in real-time simulations. We hope this project sparks further research into intelligent health monitoring for next-generation aerial vehicles.
+**GUAM-Predictive-Maintenance** provides a complete end-to-end example of how simulation + ML can enable **intelligent fault detection** in autonomous air mobility systems. With realistic flight data, a modular ML workflow, and strong detection accuracy, this work lays the foundation for:
 
+- Real-time health monitoring
+- Automated fault response
+- Safer urban aviation operations
+
+🔧 Developers and researchers are encouraged to expand on this by integrating additional fault modes, refining the feature pipeline, or testing on real flight hardware.
+
+---
