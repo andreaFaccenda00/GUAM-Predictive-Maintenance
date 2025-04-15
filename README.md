@@ -52,43 +52,48 @@ The result is a **proof-of-concept predictive maintenance framework** tailored f
 ---
 
 ## 🗂️ Project Structure
+The repository is organized into two main components:
+
+- **Dataset/** – Scripts for data generation and preprocessing from the GUAM simulator:
+  - RUNME.m – Main script to orchestrate simulation data processing. It gathers flight simulation outputs for various fault scenarios and combines them into a structured dataset.
+  - processTrajectory.m – Function to process a single simulated flight trajectory (reading simulation output files, extracting relevant signals and computing features).
+  - downSample.m – Utility to down-sample or balance the dataset (useful for handling large simulation data and class imbalance).
+  - dataTypeFault.m, checkSamples.m – Helper scripts for labeling data (e.g., encoding fault types, verifying sample counts per class) and sanity-checking the dataset composition.
+  - *(Note: The actual GUAM simulation model and raw data files are not included in this repo due to size. Instead, these scripts assume you have run the GUAM simulator to produce output files for each scenario.)*
+
+- **Classification_Learner/** – MATLAB code for training and evaluating the fault detection models, organized by classification task:
+  - **Fault/** – Contains code and results for **fault detection (binary classification)** – determining if a flight had a fault or not. This includes the extracted feature table (featureTable.mat), scripts for feature ranking (rankTable.m, statistical tests) and training the fault classifier (trainClassifier.m). A saved model (faultModel.mat) and confusion matrix plotting script are provided.
+  - **Surface/** – Contains code for **faulty control surface identification**. Given a fault has occurred, this multi-class classifier predicts *which control surface* (which actuator/surface) is failing. Includes feature data, training script, and a trained model (surfaceModel.mat).
+  - **TypeFault/** – Contains code for **fault type classification**. Here the classifier distinguishes between different *failure modes* (types of faults, e.g. different kinds of control surface failures). This folder includes feature extraction and training scripts. (Subdirectories like Surface_2/ and Surface_5/ indicate analysis focused on specific surfaces in the simulation.)
+  - **Cascade/** – (Optional) Contains an experimental **cascaded classification approach**, where fault detection and identification are performed in sequence. For example, a cascade might first detect if a fault exists, then trigger secondary classification to pinpoint the fault’s type or location. This folder can include combined workflows or additional analyses integrating the Fault, Surface, and Type classifiers.  
+
+Each sub-folder in Classification_Learner includes MATLAB live scripts or functions for training the model, splitting data into training/validation sets (splitFeatureTable.m), visualizing confusion matrices, and assessing feature importance (e.g., via ANOVA or t-tests). The code is modular to allow experimenting with different algorithms and feature sets for each prediction task.
 
 ```markdown
 📁 Dataset/
-├── RUNME.m                  → Main script to process GUAM simulation data
-├── processTrajectory.m     → Extract features from a single flight
-├── downSample.m            → Balance or reduce dataset size
-├── dataTypeFault.m         → Encode fault types
-├── checkSamples.m          → Sanity-check sample distribution
+├── RUNME.m                  
+├── processTrajectory.m     
+├── downSample.m            
+├── dataTypeFault.m         
+├── checkSamples.m          
 
 📁 Classification_Learner/
-├── Fault/                  → Binary fault detection (normal vs. fault)
+├── Fault/                  
 │   ├── featureTable.mat
 │   ├── trainClassifier.m
 │   ├── plotConfusionMatrix.m
 │   └── faultModel.mat
 │
-├── Surface/                → Predict which control surface failed
+├── Surface/                
 │   ├── surfaceModel.mat
 │   └── trainClassifier.m
 │
-├── TypeFault/              → Classify type of fault
+├── TypeFault/              
 │   ├── Surface_2/
 │   └── Surface_5/
 │
-└── Cascade/                → Optional: cascade models (detection → type/location)
+└── Cascade/                
 ```
-
-<details>
-<summary><strong>📁 GUAM Simulation (Not Included)</strong></summary>
-
-The GUAM simulator itself is not bundled due to size. To use it:
-
-- Clone from [NASA’s GUAM GitHub](https://github.com/nasa/Generic-Urban-Air-Mobility-GUAM)
-- Set up the model in MATLAB/Simulink
-- Use it to generate raw SimOut flight data, then run `RUNME.m`
-
-</details>
 
 ---
 
