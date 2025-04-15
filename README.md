@@ -33,13 +33,18 @@ The result is a **proof-of-concept predictive maintenance framework** tailored f
 ## 🎯 Key Objectives and Contributions
 
 - ✅ **Simulated Fault Dataset**  
-  Generate a rich dataset of normal and faulty flight scenarios using GUAM. Simulated faults mimic real-world control surface anomalies.
+  Generate a rich dataset of normal and faulty flight scenarios using GUAM. Simulated faults mimic real-world control surface anomalies. Faults include control surface failures and other control system anomalies, injected on different aircraft control surfaces to 
+  mimic real failure modes. This dataset provides the training and testing data for our models. 
 
 - ⚙️ **Diagnostic Feature Extraction**  
-  Extract key indicators (statistical features like RMS, peak, etc.) from flight signals to detect anomalies effectively.
+   Develop a feature extraction pipeline to identify **key indicators of faults** from raw simulation signals. We analyze the vehicle telemetry (e.g. control surface commands, sensor readings, vehicle states) to extract features (statistical metrics, signal 
+   characteristics like RMS, etc.) that correlate strongly with the presence of a fault. This step is critical to boost model accuracy by providing informative inputs. 
 
-- 🤖 **Machine Learning Models**  
-  Train classifiers (LDA, SVM, Naive Bayes, Decision Trees, Neural Networks) for:
+- 🤖 **Machine Learning Models**
+  Train and evaluate multiple machine learning models for **fault detection and diagnosis**. The models learn to distinguish normal vs. faulty operation and further classify the **fault type** and the affected **control surface**. We experimented with various 
+  classifiers (Linear Discriminant Analysis, Naive Bayes, Support Vector Machines, decision trees, and Neural Networks) to compare their performance on this problem. The outcome is an optimized model that can detect faults with high accuracy and generalize to new 
+  flight scenarios, demonstrating an effective predictive maintenance approach for UAM vehicles.
+  Train classifiers (LDA, SVM, Naive Bayes, Decision Trees) for:
   - Fault detection (binary)
   - Faulty surface identification (multi-class)
   - Fault type classification (multi-class)
