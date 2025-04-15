@@ -74,8 +74,6 @@ The goal is to detect whether a fault has occurred during flight. Several classi
 | Classifier              | Test Accuracy | Validation Accuracy | AUC (PR) |
 |------------------------|---------------|---------------------|----------|
 | **Kernel Naive Bayes** | **94.2%**     | 92.1%               | 0.987    |
-| Neural Networks        | 89.5%         | –                   | –        |
-| Linear Discriminant    | 81.6%         | –                   | –        |
 
 ---
 
@@ -139,8 +137,6 @@ The proposed system demonstrates strong potential for predictive maintenance in 
 These results confirm the **feasibility of using machine learning for early fault detection** in autonomous eVTOL vehicles, paving the way for smarter and safer urban flight systems.
 
 ---
-
-Let me know if you want a badge, visuals (e.g. model performance charts), or a downloadable PDF summary too!
 
 ## Conclusion
 
