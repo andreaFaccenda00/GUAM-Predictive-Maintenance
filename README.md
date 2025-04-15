@@ -47,13 +47,100 @@ To explore or replicate this project, follow these steps:
 
 1. **Prerequisites:** Ensure you have MATLAB installed (with Simulink and relevant toolboxes mentioned above). If you plan to regenerate the simulation data, you will need access to the NASA GUAM simulation model. You can obtain GUAM from the [NASA GitHub repository](https://github.com/nasa/Generic-Urban-Air-Mobility-GUAM) and set it up in MATLAB.  
 2. **Clone this Repository:** Download or clone `GUAM-Predictive-Maintenance` into your MATLAB workspace. Add the folders to your MATLAB path.  
-3. **Generate/Prepare Dataset:** If you have the GUAM simulator, run the simulation for the desired scenarios (as configured in `Dataset/RUNME.m`). Then execute **`Dataset/RUNME.m`** – this will process the simulation output files (you may need to edit `RUNME.m` to point to the correct directories where your GUAM output data resides). The script will produce a consolidated dataset file (`eVTOL_Data.mat`) containing all flight samples with labeled faults. (If you do not regenerate data, the code expects that a dataset file exists or is created by a prior run.)  
+3. **Generate/Prepare Dataset:** If you do not wish to regenerate the data, you can directly download the pre-processed dataset here:
+👉 Download eVTOL_Data.mat
+Place this file in the Dataset/ directory.
+If you want to generate the dataset from scratch:
+Run the GUAM simulator for the desired scenarios (configured in Dataset/RUNME.m).
+Execute Dataset/RUNME.m – this will process simulation output files and produce eVTOL_Data.mat.
 4. **Train and Evaluate Models:** Use the scripts in the `Classification_Learner` folder to train the classifiers on the dataset:
    - For example, to perform **fault detection**, navigate to `Classification_Learner/Fault/` and run **`trainClassifier.m`**. This will load the feature table, split it into training and test sets, train a classifier (you can adjust the algorithm in the script), and output performance metrics (confusion matrix, accuracy, etc.). You can similarly run the scripts in `Surface/` and `TypeFault/` for those classification tasks.  
    - Alternatively, you can load the provided trained models (e.g., `faultModel.mat`, `surfaceModel.mat`) and use them to predict on new data or inspect their properties. The **`plotConfusionMatrix.m`** scripts can be used to visualize the confusion matrices for each trained model on test data.  
 5. **Experiment:** Feel free to modify the feature extraction or try different ML models. The code is organized to easily swap in different classifier types or perform feature selection. For instance, you might integrate a different neural network architecture or adjust which features are used, and then observe the impact on fault detection accuracy.
 
 *(Note: This project is a simulation-based study. Deploying it in a real UAM vehicle would require additional steps like real sensor integration and real-time execution, but the workflow and learnings here form a foundation for such future work.)*
+Sure! Here's the **"Results"** section written in English, formatted to fit seamlessly into your `README.md`, with a clean, markdown-friendly structure and a clear conclusion at the end.
+
+---
+
+## 🔍 Results
+
+This section summarizes the performance of the developed predictive maintenance models based on simulated flight data from the GUAM environment. The classification tasks include fault detection, identification of the affected control surface, and classification of fault types. The dataset includes a wide range of injected failure modes across multiple flight trajectories.
+
+### ✅ Fault Detection (Binary Classification)
+
+The goal is to detect whether a fault has occurred during flight. Several classifiers were evaluated:
+
+| Classifier              | Test Accuracy | Validation Accuracy | AUC (PR) |
+|------------------------|---------------|---------------------|----------|
+| **Kernel Naive Bayes** | **94.2%**     | 92.1%               | 0.987    |
+| Neural Networks        | 89.5%         | –                   | –        |
+| Linear Discriminant    | 81.6%         | –                   | –        |
+
+---
+
+### 🛠️ Faulty Surface Identification (Multi-Class Classification)
+
+Given a detected fault, the next task is to determine which control surface was affected:
+
+| Classifier              | Test Accuracy | Validation Accuracy | AUC (Surface 2 / 5) |
+|------------------------|---------------|---------------------|---------------------|
+| **Kernel Naive Bayes** | **91.5%**     | 92.7%               | 0.9817 / 0.9817     |
+
+---
+
+### ⚙️ Fault Type Classification
+
+Each control surface can experience different types of faults. For surfaces 2 and 5, the classifier performance is:
+
+#### Surface 2 – *Coarse Gaussian SVM*
+
+- Test Accuracy: **61.8%**
+- Validation Accuracy: **55.2%**
+- AUC by Fault Type:  
+  - Type 1: 0.776  
+  - Type 2: 0.696  
+  - Type 3: 0.802  
+  - Type 8: 0.875  
+
+#### Surface 5 – *Coarse Gaussian SVM*
+
+- Test Accuracy: **69.5%**
+- Validation Accuracy: **52.4%**
+- AUC by Fault Type:  
+  - Type 1: 0.560  
+  - Type 2: 0.906  
+  - Type 3: 0.806  
+  - Type 8: 0.991  
+
+---
+
+### 📊 Most Informative Features
+
+Diagnostic feature selection was performed using **T-Test** and **ANOVA**, identifying the most discriminative features:
+
+- `SurfaceCmd_5 / RMS`
+- `SurfaceCmd_2 / PeakValue`
+- `SurfaceCmd_1 / PeakValue`
+- `EngineCmd_9 / Shape Factor`
+
+These features consistently ranked highest in separating faulty and normal conditions.
+
+---
+
+## 📌 Final Summary
+
+The proposed system demonstrates strong potential for predictive maintenance in Urban Air Mobility applications. Among the tested models:
+
+- **Fault detection** reached up to **94.2% accuracy**, enabling reliable identification of anomalies.
+- **Fault localization** (surface identification) achieved **91.5% accuracy**.
+- **Fault type classification** remains more challenging, with accuracy around **60–70%**, suggesting opportunities for future improvement.
+
+These results confirm the **feasibility of using machine learning for early fault detection** in autonomous eVTOL vehicles, paving the way for smarter and safer urban flight systems.
+
+---
+
+Let me know if you want a badge, visuals (e.g. model performance charts), or a downloadable PDF summary too!
 
 ## Conclusion
 
