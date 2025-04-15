@@ -2,7 +2,7 @@
 
 # ✈️ GUAM Predictive Maintenance – Fault Detection in Urban Air Mobility
 
-**Predictive maintenance and fault detection system for a Generic Urban Air Mobility (GUAM) simulation.** This project uses **machine learning** to detect and classify control system faults in a simulated eVTOL (electric vertical take-off and landing) aircraft, helping enable early fault identification in Urban Air Mobility (UAM) operations.
+This project uses **machine learning** to detect and classify control system faults in a simulated eVTOL (electric vertical take-off and landing) aircraft, helping enable early fault identification in Urban Air Mobility (UAM) operations.
 ---
 
 ## 📚 Table of Contents
